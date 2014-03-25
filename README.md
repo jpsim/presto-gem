@@ -1,6 +1,35 @@
 # The Presto Gem
 
-Gem for interacting with Presto cards.
+Gem for interacting with Presto cards. Currently supports the following features:
+
+* Registered and unregistered cards (i.e. username/passwords or card numbers)
+* Card Status
+	* Status
+	* Balance
+* User Information
+	* First Name
+	* Last Name
+	* Address 1
+	* Address 2
+	* City
+	* Province
+	* Country
+	* Postal Code
+	* Phone Number
+	* Email
+	* Security Question
+	* Security Answer
+* Transaction History
+	* Date
+	* Service Provider
+	* Location
+	* Type
+	* Amount
+	* Balance
+	* Loyalty Month
+	* Loyalty Trip
+	* Loyalty Step
+	* Loyalty Discount
 
 ## Usage
 
