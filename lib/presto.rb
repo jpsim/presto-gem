@@ -22,7 +22,7 @@ module Presto
       :security_answer
   end
 
-  class PrestoFetcher
+  class PrestoAPI
     def user_with_username_password(username, password)
       login_with_username_password(username, password)
       user_from_page(agent.get('https://www.prestocard.ca/en-US/Pages/TransactionalPages/ViewUpdateRegistration.aspx'))
