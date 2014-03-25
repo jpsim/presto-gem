@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = ["jp@jpsim.com"]
   s.homepage    = "https://github.com/jpsim/presto-gem"
   s.summary     = "Gem for interacting with Presto cards."
-  s.description = "Gem for interacting with Presto cards, makeshift API using mechanize."
+  s.description = "Gem for interacting with Presto cards, using mechanize."
 
   s.files         = `git ls-files`.split("\n")
   s.require_paths = ["lib"]
