@@ -1,6 +1,6 @@
 # The Presto Gem
 
-Gem for interacting with Presto cards. Currently supports the following features:
+Gem for interacting with [Presto cards](http://prestocard.ca). Currently supports the following features:
 
 * Registered and unregistered cards (i.e. username/passwords or card numbers)
 * Card Status
