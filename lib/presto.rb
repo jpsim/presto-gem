@@ -22,10 +22,28 @@ module Presto
       :security_answer
   end
 
+  class Transaction
+    attr_accessor :date,
+      :service_provider,
+      :location,
+      :type,
+      :amount,
+      :balance,
+      :loyalty_month,
+      :loyalty_trip,
+      :loyalty_step,
+      :loyalty_discount
+  end
+
   class PrestoAPI
     def user_with_username_password(username, password)
       login_with_username_password(username, password)
       user_from_page(agent.get('https://www.prestocard.ca/en-US/Pages/TransactionalPages/ViewUpdateRegistration.aspx'))
+    end
+
+    def transaction_history_with_username_password(username, password)
+      login_with_username_password(username, password)
+      transaction_history_from_page(agent.get('https://www.prestocard.ca/en-US/Pages/TransactionalPages/TransactionHistory.aspx'))
     end
 
     def card_status_with_username_password(username, password)
@@ -115,6 +133,26 @@ module Presto
       user.security_question = security_question.content || ''
       user.security_answer = security_answer.content || ''
       user
+    end
+
+    def transaction_history_from_page(page)
+      number_of_items = page.parser.xpath("//table[@id='ctl00_SPWebPartManager1_CheckTransactionHistoryWebPartControl_ctl00_ViewTransactionHistory_gridTransactionHistory']").children.count
+      transaction_history = []
+      for i in 2..number_of_items
+        transaction = Transaction.new
+        transaction.date = page.parser.xpath("//table[@id='ctl00_SPWebPartManager1_CheckTransactionHistoryWebPartControl_ctl00_ViewTransactionHistory_gridTransactionHistory']/tr[#{i}]/td[1]").last.content
+        transaction.service_provider = page.parser.xpath("//table[@id='ctl00_SPWebPartManager1_CheckTransactionHistoryWebPartControl_ctl00_ViewTransactionHistory_gridTransactionHistory']/tr[#{i}]/td[2]").last.content
+        transaction.location = page.parser.xpath("//table[@id='ctl00_SPWebPartManager1_CheckTransactionHistoryWebPartControl_ctl00_ViewTransactionHistory_gridTransactionHistory']/tr[#{i}]/td[3]").last.content
+        transaction.type = page.parser.xpath("//table[@id='ctl00_SPWebPartManager1_CheckTransactionHistoryWebPartControl_ctl00_ViewTransactionHistory_gridTransactionHistory']/tr[#{i}]/td[4]").last.content
+        transaction.amount = page.parser.xpath("//table[@id='ctl00_SPWebPartManager1_CheckTransactionHistoryWebPartControl_ctl00_ViewTransactionHistory_gridTransactionHistory']/tr[#{i}]/td[5]").last.content
+        transaction.balance = page.parser.xpath("//table[@id='ctl00_SPWebPartManager1_CheckTransactionHistoryWebPartControl_ctl00_ViewTransactionHistory_gridTransactionHistory']/tr[#{i}]/td[6]").last.content
+        transaction.loyalty_month = page.parser.xpath("//table[@id='ctl00_SPWebPartManager1_CheckTransactionHistoryWebPartControl_ctl00_ViewTransactionHistory_gridTransactionHistory']/tr[#{i}]/td[7]").last.content
+        transaction.loyalty_trip = page.parser.xpath("//table[@id='ctl00_SPWebPartManager1_CheckTransactionHistoryWebPartControl_ctl00_ViewTransactionHistory_gridTransactionHistory']/tr[#{i}]/td[8]").last.content
+        transaction.loyalty_step = page.parser.xpath("//table[@id='ctl00_SPWebPartManager1_CheckTransactionHistoryWebPartControl_ctl00_ViewTransactionHistory_gridTransactionHistory']/tr[#{i}]/td[9]").last.content
+        transaction.loyalty_discount = page.parser.xpath("//table[@id='ctl00_SPWebPartManager1_CheckTransactionHistoryWebPartControl_ctl00_ViewTransactionHistory_gridTransactionHistory']/tr[#{i}]/td[10]").last.content
+        transaction_history.push transaction
+      end
+      transaction_history
     end
 
     def agent
