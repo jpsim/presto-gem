@@ -26,6 +26,7 @@ module PrestoAPI
 
   class User < Base
     attr_accessor :first_name,
+      :card_number,
       :last_name,
       :address,
       :apt,
@@ -54,8 +55,10 @@ module PrestoAPI
 
   class Client
     def user_with_username_password(username, password)
-      login_with_username_password(username, password)
-      user_from_page(agent.get('https://www.prestocard.ca/en-US/Pages/TransactionalPages/ViewUpdateRegistration.aspx'))
+      card_number = card_number_from_page(login_with_username_password(username, password))
+      user = user_from_page(agent.get('https://www.prestocard.ca/en-US/Pages/TransactionalPages/ViewUpdateRegistration.aspx'))
+      user.card_number = card_number
+      user
     end
 
     def transaction_history_with_username_password(username, password)
@@ -150,6 +153,11 @@ module PrestoAPI
       user.security_question = security_question.content || ''
       user.security_answer = security_answer.content || ''
       user
+    end
+
+    def card_number_from_page(page)
+      card_number = page.parser.xpath('//span[@id="ctl00_PlaceHolderContent_PlaceHolderSiteNavigation_CardNavigationMenuWebPart_ctl00_labelFareCardNo"]/text()[last()]').last.content
+      card_number[/^\d+/].to_s
     end
 
     def transaction_history_from_page(page)
