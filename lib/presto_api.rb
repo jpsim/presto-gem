@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'mechanize'
 
-module Presto
+module PrestoAPI
   class CardStatus
     attr_accessor :balance, :status
   end
@@ -34,7 +34,7 @@ module Presto
       :loyalty_discount
   end
 
-  class PrestoAPI
+  class Client
     def user_with_username_password(username, password)
       login_with_username_password(username, password)
       user_from_page(agent.get('https://www.prestocard.ca/en-US/Pages/TransactionalPages/ViewUpdateRegistration.aspx'))

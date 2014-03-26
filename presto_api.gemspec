@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
-require "presto/version"
+require "presto_api/version"
 
 Gem::Specification.new do |s|
-  s.name        = "presto"
+  s.name        = "presto_api"
   s.version     = Presto::VERSION
   s.licenses    = ['MIT']
   s.platform    = Gem::Platform::RUBY
