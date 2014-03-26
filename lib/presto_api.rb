@@ -28,8 +28,8 @@ module PrestoAPI
     attr_accessor :first_name,
       :card_number,
       :last_name,
-      :address,
-      :apt,
+      :address1,
+      :address2,
       :city,
       :province,
       :country,
@@ -124,8 +124,8 @@ module PrestoAPI
     def user_from_page(page)
       first_name = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelFirstNameOutput"]/text()[last()]').last
       last_name = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelLastNameOutput"]/text()[last()]').last
-      address = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelStreetAddress1Output"]/text()[last()]').last
-      apt = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelStreetAddress1Output"]/text()[last()]').last
+      address1 = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelStreetAddress1Output"]/text()[last()]').last
+      address2 = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelStreetAddress2Output"]/text()[last()]').last
       city = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelCityOutput"]/text()[last()]').last
       province = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelProvinceOutput"]/text()[last()]').last
       country = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelCountryOutput"]/text()[last()]').last
@@ -143,8 +143,8 @@ module PrestoAPI
       user = User.new
       user.first_name = first_name.content || ''
       user.last_name = last_name.content || ''
-      user.address = address.content || ''
-      user.apt = apt.content || ''
+      user.address1 = address1.content || ''
+      user.address2 = address2.content || ''
       user.city = city.content || ''
       user.province = province.content || ''
       user.country = country.content || ''
