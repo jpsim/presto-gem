@@ -1,9 +1,10 @@
 # -*- encoding: utf-8 -*-
+$:.push File.expand_path("../lib", __FILE__)
 require "presto_api/version"
 
 Gem::Specification.new do |s|
   s.name        = "presto_api"
-  s.version     = Presto::VERSION
+  s.version     = PrestoAPI::VERSION
   s.licenses    = ['MIT']
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['JP Simard']
