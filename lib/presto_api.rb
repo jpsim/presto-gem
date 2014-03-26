@@ -4,16 +4,35 @@ require 'open-uri'
 require 'json'
 require 'base64'
 
-module Presto
-  class CardStatus
-    attr_accessor :balance, :status
+module PrestoAPI
+  class Base
+    def to_json
+      hash = {}
+      self.instance_variables.each do |var|
+        # Remove @ symbol from var name
+        key = var.to_s[1..-1]
+        hash[key] = self.instance_variable_get var
+      end
+      hash.to_json
+    end
+
+    def from_json! string
+      JSON.load(string).each do |var, val|
+        self.instance_variable_set var, val
+      end
+    end
   end
 
-  class User
+  class Card < Base
+    attr_accessor :number, :balance, :status
+  end
+
+  class User < Base
     attr_accessor :first_name,
+      :card_number,
       :last_name,
-      :address,
-      :apt,
+      :address1,
+      :address2,
       :city,
       :province,
       :country,
@@ -24,7 +43,7 @@ module Presto
       :security_answer
   end
 
-  class Transaction
+  class Transaction < Base
     attr_accessor :date,
       :service_provider,
       :location,
@@ -44,10 +63,12 @@ module Presto
       :expiry_year
   end
 
-  class PrestoAPI
+  class Client
     def user_with_username_password(username, password)
-      login_with_username_password(username, password)
-      user_from_page(agent.get('https://www.prestocard.ca/en-US/Pages/TransactionalPages/ViewUpdateRegistration.aspx'))
+      card_number = card_number_from_page(login_with_username_password(username, password))
+      user = user_from_page(agent.get('https://www.prestocard.ca/en-US/Pages/TransactionalPages/ViewUpdateRegistration.aspx'))
+      user.card_number = card_number
+      user
     end
 
     def transaction_history_with_username_password(username, password)
@@ -113,17 +134,18 @@ module Presto
         puts 'Try logging in with username/password instead of just the card number'
         return nil
       end
-      card_status = CardStatus.new
-      card_status.status = status.content
-      card_status.balance = balance.content
-      card_status
+      card = Card.new
+      card.status = status.content
+      card.balance = balance.content
+      card.number = card_number_from_page(page)
+      card
     end
 
     def user_from_page(page)
       first_name = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelFirstNameOutput"]/text()[last()]').last
       last_name = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelLastNameOutput"]/text()[last()]').last
-      address = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelStreetAddress1Output"]/text()[last()]').last
-      apt = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelStreetAddress1Output"]/text()[last()]').last
+      address1 = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelStreetAddress1Output"]/text()[last()]').last
+      address2 = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelStreetAddress2Output"]/text()[last()]').last
       city = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelCityOutput"]/text()[last()]').last
       province = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelProvinceOutput"]/text()[last()]').last
       country = page.parser.xpath('//span[@id="ctl00_SPWebPartManager1_updateRegistrationWebPart_ctl00_WizardViewUpdateProfile_labelCountryOutput"]/text()[last()]').last
@@ -141,8 +163,8 @@ module Presto
       user = User.new
       user.first_name = first_name.content || ''
       user.last_name = last_name.content || ''
-      user.address = address.content || ''
-      user.apt = apt.content || ''
+      user.address1 = address1.content || ''
+      user.address2 = address2.content || ''
       user.city = city.content || ''
       user.province = province.content || ''
       user.country = country.content || ''
@@ -152,6 +174,11 @@ module Presto
       user.security_question = security_question.content || ''
       user.security_answer = security_answer.content || ''
       user
+    end
+
+    def card_number_from_page(page)
+      card_number = page.parser.xpath('//span[@id="ctl00_PlaceHolderContent_PlaceHolderSiteNavigation_CardNavigationMenuWebPart_ctl00_labelFareCardNo"]/text()[last()]').last.content
+      card_number[/^\d+/].to_s
     end
 
     def transaction_history_from_page(page)

@@ -34,9 +34,9 @@ Gem for interacting with [Presto cards](http://prestocard.ca). Currently support
 ## Usage
 
 ```ruby
-require 'presto'
+require 'presto_api'
 
-status = Presto::PrestoAPI.new.card_status_with_number('XXXXXXXXXXXXXXXXX')
+status = PrestoAPI::Client.new.card_status_with_number('XXXXXXXXXXXXXXXXX')
 puts status.balance
 ```
 
