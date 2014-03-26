@@ -247,7 +247,7 @@ module PrestoAPI
       hpp_id["hpp_id="] = ""
       hpp_ticket = callCCPurchase[/hpp_ticket=[^"]+/,0]
       hpp_ticket["hpp_ticket="] = ""
-      pan = credit_card_number
+      pan = credit_card.number
       pan_mm = credit_card.expiry_month
       pan_yy = credit_card.expiry_year
       cardholder = credit_card.name
@@ -269,7 +269,9 @@ module PrestoAPI
       form_text_encoded = parsed['response']['data']['form']
       form_text_decoded = Base64.decode64(form_text_encoded)
 
-      # TODO: continue this method
+      # Send the decoded HTML back to the client so the user can
+      # confirm with their credit card provider
+      form_text_decoded
     end
 
     def agent
