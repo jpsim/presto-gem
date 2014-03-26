@@ -20,8 +20,8 @@ module PrestoAPI
     end
   end
 
-  class CardStatus < Base
-    attr_accessor :balance, :status
+  class Card < Base
+    attr_accessor :number, :balance, :status
   end
 
   class User < Base
@@ -114,10 +114,11 @@ module PrestoAPI
         puts 'Try logging in with username/password instead of just the card number'
         return nil
       end
-      card_status = CardStatus.new
-      card_status.status = status.content
-      card_status.balance = balance.content
-      card_status
+      card = Card.new
+      card.status = status.content
+      card.balance = balance.content
+      card.number = card_number_from_page(page)
+      card
     end
 
     def user_from_page(page)
