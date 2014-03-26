@@ -2,11 +2,29 @@ require 'rubygems'
 require 'mechanize'
 
 module PrestoAPI
-  class CardStatus
+  class Base
+    def to_json
+      hash = {}
+      self.instance_variables.each do |var|
+        # Remove @ symbol from var name
+        key = var.to_s[1..-1]
+        hash[key] = self.instance_variable_get var
+      end
+      hash.to_json
+    end
+
+    def from_json! string
+      JSON.load(string).each do |var, val|
+        self.instance_variable_set var, val
+      end
+    end
+  end
+
+  class CardStatus < Base
     attr_accessor :balance, :status
   end
 
-  class User
+  class User < Base
     attr_accessor :first_name,
       :last_name,
       :address,
@@ -21,7 +39,7 @@ module PrestoAPI
       :security_answer
   end
 
-  class Transaction
+  class Transaction < Base
     attr_accessor :date,
       :service_provider,
       :location,
