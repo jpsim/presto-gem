@@ -268,6 +268,8 @@ module PrestoAPI
       parsed = JSON.parse(page.body)
       form_text_encoded = parsed['response']['data']['form']
       form_text_decoded = Base64.decode64(form_text_encoded)
+      form_text_decoded.gsub! '\\n', ''
+      form_text_decoded.gsub! '\\"', '"'
 
       # Send the decoded HTML back to the client so the user can
       # confirm with their credit card provider
